@@ -15,15 +15,6 @@ public:
 	inline bool operator()(op a, op b){return a<b;};
 };
 
-template <class op>
-void swap(op *i, op *j)
-{
-	op temp;
-	temp = *i;
-	*i = *j;
-	*j = temp;
-}
-
 template <class T>
 class Nodo
 {
