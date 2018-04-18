@@ -1,6 +1,28 @@
 #include <iostream>
 
 using namespace std;
+ using namespace std;
+
+template <class op>
+class Mayor{
+public:
+	inline bool operator()(op a, op b){return (a>b);};
+};
+
+template <class op>
+class Menor{
+public:
+	inline bool operator()(op a, op b){return a<b;};
+};
+
+template <class op>
+void swap(op *i, op *j)
+{
+	op temp;
+	temp = *i;
+	*i = *j;
+	*j = temp;
+}
 
 template <class T>
 class Nodo
@@ -22,12 +44,12 @@ public:
 	}
 };
 
-template <class T>
+template <class T, class op>
 class Lista
 {
 public:
     Nodo<T>* inicio=NULL;
-
+    op operacion;
     Lista(){
         this->inicio=NULL;
         //this->inicio->val = nullptr;
@@ -39,16 +61,16 @@ public:
 
 };
 
-template <class T>
-bool Lista<T>::find(T x, Nodo<T> **&p)
+template <class T, class op>
+bool Lista<T, op>::find(T x, Nodo<T> **&p)
 {
     p= &inicio;
-    for(p= &inicio; (*p) && ((*p)->val < x) ; p = &((*p)->next));
+    for(p= &inicio; (*p) && operacion((*p)->val, x) ; p = &((*p)->next));
     return (*p) && (*p)->val==x;
 }
 
-template <class T>
-bool Lista<T>::insert(T x)
+template <class T , class op>
+bool Lista<T, op>::insert(T x)
 {
     Nodo<T> **p;
     if(find(x,p)) return 0;
@@ -58,8 +80,8 @@ bool Lista<T>::insert(T x)
     return 1;
 }
 
-template <class T>
-bool Lista<T> :: remove(T x)
+template <class T, class op>
+bool Lista<T,op> :: remove(T x)
 {
     Nodo<T> **p;
     if(!find(x,p)) return 0;
@@ -69,8 +91,8 @@ bool Lista<T> :: remove(T x)
     return 1;
 }
 
-template <class T>
-void Lista<T>:: print()
+template <class T, class op>
+void Lista<T,op>:: print()
     {
         Nodo<T> *temp;
         temp = inicio;
@@ -84,7 +106,8 @@ void Lista<T>:: print()
 
 int main()
 {
-    Lista<int> *A = new Lista<int>;
+  //  Mayor<int> asce;
+    Lista<int, Menor<int> > *A = new Lista<int, Menor<int>>;
     A->insert(2);
     A->insert(1);
     A->insert(3);
