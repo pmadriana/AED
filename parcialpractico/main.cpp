@@ -130,7 +130,8 @@ public:
             next = &(*next)->next;
         }
         cout<<"Carta invalida"<<endl<<endl;
-        if((*next)->Svalue == pilaDescarte->Svalue or (*next)->symbol == pilaDescarte->symbol)
+
+        if( (*next)->value ==50 or (*next)->Svalue == pilaDescarte->Svalue or (*next)->symbol == pilaDescarte->symbol)
         {
             pilaDescarte->value = (*next)->value;
             pilaDescarte->Svalue = (*next)->Svalue;
@@ -177,7 +178,7 @@ public:
                 Node<T> *temp = Head;
                 do {
                     if (temp->Svalue != "" and temp->symbol != "") {
-                        cout <<"    "<< i<<" )  "<<temp->Svalue<<" "<<(temp->symbol=="corazones" << endl;
+                        cout <<"    "<< i<<" )  "<<temp->Svalue<<" "<<temp->symbol<< endl;
                         i++;
                     }
                     /*cout << "-> " << temp->next->value << endl;*/
@@ -389,3 +390,4 @@ int main() {
 
     return 0;
 }
+
