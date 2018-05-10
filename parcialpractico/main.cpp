@@ -129,7 +129,6 @@ public:
         for (; cartaSelec > 1; cartaSelec--) {
             next = &(*next)->next;
         }
-        cout<<"Carta invalida"<<endl<<endl;
 
         if( (*next)->value ==50 or (*next)->Svalue == pilaDescarte->Svalue or (*next)->symbol == pilaDescarte->symbol)
         {
@@ -144,7 +143,7 @@ public:
     }
 
     bool comprobarMazo() {
-        return !!Head;
+      return Head;
     }
 
     void Actual()
@@ -161,7 +160,7 @@ public:
     int getValorCartas() {
         int puntajeTotal = 0;
         puntajeTotal += Head->value;
-        for (Node<T> **next = &Head->next; *next != Head; next = &(*next)->next)
+        for (Node<T> **next = &Head->next; *next && *next != Head; next = &(*next)->next)
             puntajeTotal += (*next)->value;
         return puntajeTotal;
     }
@@ -248,7 +247,7 @@ void crear_baraja(int n, List<int> *&baraja) { ///tam baraja
     for (int i = 0; i < n; i++) {
         int x = i % 13 + 1;
         string Svalue = (x == 1) ? "A" : (x == 11) ? "J" : (x == 12) ? "Q" : (x == 13) ? "K" : to_string(x); //El numero de la carta
-        string symbol = (a[i] < 13) ? "Espadas" : (a[i] < 26) ? "Corazones" : (a[i] < 39) ? "Rombo" : "Trebol";
+        string symbol = (i < 13) ? "Espadas" : (i < 26) ? "Corazones" : (i < 39) ? "Rombo" : "Trebol";
         //cout<<"valores a ingresar: "<<x<<" "<<Svalue<<" "<<symbol<<endl;
         baraja->insert((x == 8) ? 50 : (x > 10) ? 10 : x, Svalue, symbol);
     }
@@ -259,7 +258,14 @@ int main() {
     int numJugadores;
     int PuntajeGanador[3] = {100, 150, 200};
     system("color 29");
-    cout << "Bienvenido al juego de 8 locos" <<endl<<endl<< "Por favor ingresa el numero de jugadores" <<endl;
+    cout<<"  _____   _      _____  _____  _____  _____ "<<endl;
+cout<<" |  _  |  | |    |  _  |/  __ \\|  _  |/  ___|"<<endl;
+cout<<"  \\ V /   | |    | | | || /  \\/| | | |\\ `--. "<<endl;
+cout<<"  / _ \\   | |    | | | || |    | | | | `--. \\ "<<endl;
+cout<<" | |_| |  | |____\\ \\_/ /| \\__/\\\\ \\_/ //\\__/ /"<<endl;
+cout<<" \\___ _/  \\_____/ \\___/  \\____/ \\___/ \\____/" <<endl<<endl<<endl;
+
+cout << "Bienvenido al juego de 8 locos" <<endl<<endl<< "Por favor ingresa el numero de jugadores" <<endl;
     cin >> numJugadores;
     while (numJugadores < 2 or numJugadores > 4) {
         cout << "El juego es de 2 a 4 jugadores, ingrese otro numero: ";
@@ -280,7 +286,7 @@ int main() {
     //REPARTIR CARTAS//
     cout<<"repartiendo cartas:"<<endl;
     int jugadorActual = 0;
-    int puntajeTotal, puntajes[numJugadores];
+    int puntajeTotal, puntajes[4];
     for (int i = 0; i < numJugadores; i++) {
         array_jug[i]->RepartirBaraja(num_cartas, Baraja);
         cout << "\ncartas del Jugador " << i + 1 << endl;
@@ -348,6 +354,8 @@ int main() {
                 cartaValida = array_jug[jugadorActual]->cFind(cartaSelec,pilaDescarte);//////
             }
         }
+        //cout<<"BARAJA JUG" <<endl;
+       // if(array_jug[jugadorActual]->comprobarMazo()) array_jug[jugadorActual]->print(); else cout<<"nada";
         if (Baraja->comprobarMazo() == 0) {
             int menorPuntajePos, menorPuntaje = array_jug[0]->getValorCartas();
             puntajes[0] = menorPuntaje;
@@ -363,31 +371,37 @@ int main() {
             }
             array_jug[menorPuntajePos]->add_puntaje(puntajeTotal);
             if ((array_jug[jugadorActual]->getValorCartas() > PuntajeGanador[numJugadores])) terminar_juego = 0;
-        }
+        }else cout<<" ";
         int puntaje_tot = 0;
-        if (array_jug[jugadorActual]->comprobarMazo() == 0) {
+        if (!array_jug[jugadorActual]->comprobarMazo()) {
+            cout<<"TE QUEDASTE SIN CARTAS!"<<endl;
             for (int i = 0; i < numJugadores; i++) {
-                puntaje_tot += array_jug[i]->getValorCartas(); ///puntaje de cada jugador
+                if(i != jugadorActual)
+                    puntaje_tot += array_jug[i]->getValorCartas(); ///puntaje de cada jugador
             }
-            //array_jug[jugadorActual]->add_puntaje() = puntaje_tot;
-            cout << "PUNTAJE DEL JUGADOR SIN CARTAS: " << puntaje_tot << endl;
+            array_jug[jugadorActual]->add_puntaje(puntaje_tot);
+              cout << "PUNTAJE DEL JUGADOR SIN CARTAS: " <<puntaje_tot<<endl;
+            cout<<endl<<endl;
+
             delete Baraja;
             for (int i = 0; i < numJugadores; i++) {
                 delete array_jug[i];
             }
+            List<int> *Baraja = new List<int>();
+           for (int i = 0; i < numJugadores; i++)
+            array_jug[i] = new List<int>();
+
+            crear_baraja(52, Baraja);
+         ///SIGUIENTE RONDAAAAAAAAAAAA
             for (int i = 0; i < numJugadores; i++) {
                 array_jug[i]->RepartirBaraja(num_cartas, Baraja);
             }
-            crear_baraja(52, Baraja);
-
-            if (array_jug[jugadorActual]->getValorCartas() > PuntajeGanador[numJugadores]) terminar_juego = 0;
-
-        }
 
 
-        system("cls");
+            if (puntaje_tot > PuntajeGanador[numJugadores]) terminar_juego = 0;
+
     }
-
-    return 0;
+   system("cls");
+    }
+return 0;
 }
-
